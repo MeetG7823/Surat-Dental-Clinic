@@ -42,7 +42,7 @@
       <div class="nav-links" id="nav-links">
         <a href="#about" class="nav-link" id="nav-about">About Clinic</a>
         <a href="#treatments" class="nav-link" id="nav-treatments">Treatments</a>
-        <a href="#proof" class="nav-link" id="nav-proof">Patient Proof</a>
+        <a href="#proof" class="nav-link" id="nav-proof">Smile Transformations</a>
         <a href="#booking" class="nav-cta" id="nav-cta-book">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
             stroke-linecap="round" stroke-linejoin="round">
@@ -183,6 +183,16 @@
             <div class="doctor-card-body">
               <h3 class="doctor-card-name">Dr Swara Gondalia</h3>
               <p class="doctor-card-title">B.D.S. (Dental Surgeon)</p>
+              <div class="doctor-specialties">
+                <div class="specialty-badge">
+                  <span class="badge-icon">✨</span>
+                  <span class="badge-text">Specialist in Smile Designing</span>
+                </div>
+                <div class="specialty-badge">
+                  <span class="badge-icon">💎</span>
+                  <span class="badge-text">Veneers Specialist</span>
+                </div>
+              </div>
               <p class="doctor-card-desc">
                 Dr. Swara Gondalia brings a meticulous eye for detail and a patient-first philosophy to every procedure.
                 Specializing in advanced diagnostics, aesthetic reconstructions, and painless laser dentistry, her
@@ -776,23 +786,59 @@
                     <label class="form-label" for="patient-phone">Phone Number</label>
                     <input type="tel" class="form-input" id="patient-phone" name="phone" placeholder="e.g. 98765 43210"
                       required />
+                    <span class="form-error-msg" id="phone-error-msg">Phone number must be exactly 10 digits.</span>
                   </div>
 
                   <div class="form-group full-width">
-                    <label class="form-label" for="treatment-concern">Treatment Concern</label>
-                    <select class="form-select" id="treatment-concern" name="concern" required>
-                      <option value="" disabled selected>Select your concern...</option>
-                      <option value="dental-implants">Dental Implants</option>
-                      <option value="root-canal">Root Canal Treatment</option>
-                      <option value="teeth-whitening">Teeth Whitening</option>
-                      <option value="veneers-crowns">Veneers &amp; Crowns</option>
-                      <option value="dentures-bridges">Dentures &amp; Bridges</option>
-                      <option value="tooth-extraction">Tooth Extraction</option>
-                      <option value="deep-cleaning">Deep Cleaning / Scaling</option>
-                      <option value="cosmetic-reshaping">Cosmetic Reshaping</option>
-                      <option value="emergency">Dental Emergency</option>
-                      <option value="consultation">General Consultation</option>
-                    </select>
+                    <label class="form-label" for="treatment-concern">Treatment Concern(s)</label>
+                    <div class="custom-multiselect" id="concern-multiselect">
+                      <div class="multiselect-trigger" id="multiselect-trigger" tabindex="0">
+                        <span class="trigger-text placeholder">Select concern(s)...</span>
+                        <span class="trigger-arrow"></span>
+                      </div>
+                      <div class="multiselect-dropdown" id="multiselect-dropdown">
+                        <div class="multiselect-option" data-value="dental-implants">
+                          <input type="checkbox" id="opt-implants" />
+                          <label for="opt-implants">Dental Implants</label>
+                        </div>
+                        <div class="multiselect-option" data-value="root-canal">
+                          <input type="checkbox" id="opt-root-canal" />
+                          <label for="opt-root-canal">Root Canal Treatment</label>
+                        </div>
+                        <div class="multiselect-option" data-value="teeth-whitening">
+                          <input type="checkbox" id="opt-whitening" />
+                          <label for="opt-whitening">Teeth Whitening</label>
+                        </div>
+                        <div class="multiselect-option" data-value="veneers-crowns">
+                          <input type="checkbox" id="opt-veneers" />
+                          <label for="opt-veneers">Veneers &amp; Crowns</label>
+                        </div>
+                        <div class="multiselect-option" data-value="dentures-bridges">
+                          <input type="checkbox" id="opt-dentures" />
+                          <label for="opt-dentures">Dentures &amp; Bridges</label>
+                        </div>
+                        <div class="multiselect-option" data-value="tooth-extraction">
+                          <input type="checkbox" id="opt-extraction" />
+                          <label for="opt-extraction">Tooth Extraction</label>
+                        </div>
+                        <div class="multiselect-option" data-value="deep-cleaning">
+                          <input type="checkbox" id="opt-cleaning" />
+                          <label for="opt-cleaning">Deep Cleaning / Scaling</label>
+                        </div>
+                        <div class="multiselect-option" data-value="cosmetic-reshaping">
+                          <input type="checkbox" id="opt-reshaping" />
+                          <label for="opt-reshaping">Cosmetic Reshaping</label>
+                        </div>
+                        <div class="multiselect-option" data-value="emergency">
+                          <input type="checkbox" id="opt-emergency" />
+                          <label for="opt-emergency">Dental Emergency</label>
+                        </div>
+                        <div class="multiselect-option" data-value="consultation">
+                          <input type="checkbox" id="opt-consultation" />
+                          <label for="opt-consultation">General Consultation</label>
+                        </div>
+                      </div>
+                    </div>
                   </div>
 
                   <div class="form-group full-width">
@@ -841,14 +887,7 @@
                 Your appointment request has been successfully routed.
                 Our team will confirm your slot via phone within 15 minutes.
               </p>
-              <div class="success-badge">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
-                  stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
-                  <polyline points="22 4 12 14.01 9 11.01" />
-                </svg>
-                Appointment Request Routed via Webhook
-              </div>
+
             </div>
           </div>
         </div>

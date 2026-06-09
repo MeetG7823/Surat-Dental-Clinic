@@ -48,8 +48,18 @@ document.addEventListener('DOMContentLoaded', () => {
       const targetEl = document.querySelector(targetId);
       if (targetEl) {
         const navHeight = navbar.offsetHeight;
-        const ribbonHeight = document.getElementById('top-ribbon').offsetHeight;
-        const targetPosition = targetEl.getBoundingClientRect().top + window.pageYOffset - navHeight;
+        let targetPosition = targetEl.getBoundingClientRect().top + window.pageYOffset - navHeight;
+
+        // Scroll directly to the section's heading element (bypassing top padding of the section)
+        const headingEl = targetEl.querySelector('.section-header') || targetEl.querySelector('.section-label');
+        if (headingEl) {
+          targetPosition = headingEl.getBoundingClientRect().top + window.pageYOffset - navHeight;
+
+          // Leave a little breathing room (offset) specifically for the About Clinic page
+          if (targetId === '#about') {
+            targetPosition -= 24; // 24px offset buffer
+          }
+        }
 
         window.scrollTo({
           top: targetPosition,
@@ -171,7 +181,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!indicator || window.innerWidth <= 768) return;
     const parentRect = activeBtn.parentElement.getBoundingClientRect();
     const btnRect = activeBtn.getBoundingClientRect();
-    
+
     indicator.style.width = `${btnRect.width}px`;
     indicator.style.transform = `translateX(${btnRect.left - parentRect.left - 6}px)`;
   };
@@ -276,11 +286,148 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ---------------------------------------------------------------
-  // 6. APPOINTMENT FORM — Date Picker & Time Slots
+  // 6. APPOINTMENT FORM — Date Picker, Custom Multiselect & Time Slots
   // ---------------------------------------------------------------
   const dateInput = document.getElementById('appointment-date');
   const timeSlots = document.querySelectorAll('.time-slot');
   let selectedTime = null;
+
+  // Custom Multiselect logic
+  const multiselect = document.getElementById('concern-multiselect');
+  const trigger = document.getElementById('multiselect-trigger');
+  const dropdown = document.getElementById('multiselect-dropdown');
+  const options = dropdown.querySelectorAll('.multiselect-option');
+  const triggerText = trigger.querySelector('.trigger-text');
+  let selectedConcerns = [];
+
+  if (trigger) {
+    trigger.addEventListener('click', (e) => {
+      e.stopPropagation();
+      multiselect.classList.toggle('open');
+    });
+
+    trigger.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        multiselect.classList.toggle('open');
+      }
+    });
+
+    document.addEventListener('click', (e) => {
+      if (multiselect && !multiselect.contains(e.target)) {
+        multiselect.classList.remove('open');
+      }
+    });
+
+    options.forEach(opt => {
+      const checkbox = opt.querySelector('input[type="checkbox"]');
+      const value = opt.dataset.value;
+
+      opt.addEventListener('click', (e) => {
+        if (e.target !== checkbox && e.target.tagName !== 'LABEL') {
+          checkbox.checked = !checkbox.checked;
+          checkbox.dispatchEvent(new Event('change'));
+        }
+      });
+
+      checkbox.addEventListener('change', () => {
+        if (checkbox.checked) {
+          if (!selectedConcerns.includes(value)) {
+            selectedConcerns.push(value);
+            opt.classList.add('selected');
+          }
+        } else {
+          selectedConcerns = selectedConcerns.filter(v => v !== value);
+          opt.classList.remove('selected');
+        }
+
+        if (selectedConcerns.length === 0) {
+          triggerText.textContent = "Select concern(s)...";
+          triggerText.classList.add('placeholder');
+        } else {
+          const selectedLabels = Array.from(options)
+            .filter(o => selectedConcerns.includes(o.dataset.value))
+            .map(o => o.querySelector('label').textContent);
+          triggerText.textContent = selectedLabels.join(', ');
+          triggerText.classList.remove('placeholder');
+        }
+      });
+    });
+  }
+
+  // Update available slots function
+  const updateSlotsAvailability = () => {
+    if (!dateInput || !dateInput.value) return;
+
+    const selectedDateVal = dateInput.value;
+    const today = new Date();
+
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth() + 1).padStart(2, '0');
+    const dd = String(today.getDate()).padStart(2, '0');
+    const todayStr = `${yyyy}-${mm}-${dd}`;
+
+    const isToday = selectedDateVal === todayStr;
+
+    const parseSlotTime = (timeStr) => {
+      const [time, modifier] = timeStr.split(' ');
+      let [hours, minutes] = time.split(':').map(Number);
+      if (modifier === 'PM' && hours < 12) {
+        hours += 12;
+      }
+      if (modifier === 'AM' && hours === 12) {
+        hours = 0;
+      }
+      return { hours, minutes };
+    };
+
+    const currentHours = today.getHours();
+    const currentMinutes = today.getMinutes();
+
+    let anySlotAvailable = false;
+
+    timeSlots.forEach(slot => {
+      const slotTime = slot.dataset.time;
+      const { hours: slotHours, minutes: slotMinutes } = parseSlotTime(slotTime);
+
+      if (isToday) {
+        // If today, disable slot if it is in the past
+        const isPast = (slotHours < currentHours) || (slotHours === currentHours && slotMinutes <= currentMinutes);
+        if (isPast) {
+          slot.disabled = true;
+          slot.classList.add('disabled');
+          if (selectedTime === slotTime) {
+            slot.classList.remove('selected');
+            selectedTime = null;
+          }
+        } else {
+          slot.disabled = false;
+          slot.classList.remove('disabled');
+          anySlotAvailable = true;
+        }
+      } else {
+        slot.disabled = false;
+        slot.classList.remove('disabled');
+        anySlotAvailable = true;
+      }
+    });
+
+    const noSlotsMessage = document.getElementById('no-slots-message');
+    if (isToday && !anySlotAvailable) {
+      if (!noSlotsMessage) {
+        const msg = document.createElement('div');
+        msg.id = 'no-slots-message';
+        msg.className = 'no-slots-alert';
+        msg.textContent = '⚠️ All slots for today are in the past. Please select tomorrow or a future date.';
+        const grid = document.getElementById('time-slots-grid');
+        grid.parentNode.insertBefore(msg, grid);
+      }
+    } else {
+      if (noSlotsMessage) {
+        noSlotsMessage.remove();
+      }
+    }
+  };
 
   // Set minimum date to today
   if (dateInput) {
@@ -301,13 +448,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const tmDD = String(tomorrow.getDate()).padStart(2, '0');
     dateInput.value = `${tmYYYY}-${tmMM}-${tmDD}`;
 
-    // Sunday validation
+    // Sunday check + slot updates
     dateInput.addEventListener('change', () => {
       if (!dateInput.value) return;
       const selectedDate = new Date(dateInput.value);
       if (selectedDate.getDay() === 0) {
         alert("The clinic is closed on Sundays. Please select a Monday to Saturday date.");
-        
+
         // Reset to next available weekday
         const defaultDate = new Date();
         defaultDate.setDate(defaultDate.getDate() + 1);
@@ -319,17 +466,52 @@ document.addEventListener('DOMContentLoaded', () => {
         const defDD = String(defaultDate.getDate()).padStart(2, '0');
         dateInput.value = `${defYYYY}-${defMM}-${defDD}`;
       }
+      updateSlotsAvailability();
     });
+
+    // Run initially to setup availability for default date
+    updateSlotsAvailability();
   }
 
   // Time slot selection
   timeSlots.forEach(slot => {
     slot.addEventListener('click', () => {
+      if (slot.disabled || slot.classList.contains('disabled')) return;
       timeSlots.forEach(s => s.classList.remove('selected'));
       slot.classList.add('selected');
       selectedTime = slot.dataset.time;
     });
   });
+
+  // Real-time Phone Number Validation
+  const phoneInput = document.getElementById('patient-phone');
+  const phoneError = document.getElementById('phone-error-msg');
+
+  if (phoneInput && phoneError) {
+    const validatePhone = () => {
+      const cleaned = phoneInput.value.replace(/\D/g, '');
+
+      // Limit to 10 digits in real-time
+      if (phoneInput.value !== cleaned) {
+        phoneInput.value = cleaned;
+      }
+      if (phoneInput.value.length > 10) {
+        phoneInput.value = phoneInput.value.slice(0, 10);
+      }
+
+      const digitCount = phoneInput.value.length;
+      if (digitCount > 0 && digitCount < 10) {
+        phoneError.classList.add('visible');
+        phoneInput.style.borderColor = 'var(--red)';
+      } else {
+        phoneError.classList.remove('visible');
+        phoneInput.style.borderColor = '';
+      }
+    };
+
+    phoneInput.addEventListener('input', validatePhone);
+    phoneInput.addEventListener('blur', validatePhone);
+  }
 
   // ---------------------------------------------------------------
   // 7. FORM SUBMISSION with animated success state
@@ -346,10 +528,10 @@ document.addEventListener('DOMContentLoaded', () => {
       // Basic validation
       const name = document.getElementById('patient-name').value.trim();
       const phone = document.getElementById('patient-phone').value.trim();
-      const concern = document.getElementById('treatment-concern').value;
+      const concern = selectedConcerns; // Array of selected concern values
       const date = document.getElementById('appointment-date').value;
 
-      if (!name || !phone || !concern || !date) {
+      if (!name || !phone || concern.length === 0 || !date) {
         // Shake the submit button for feedback
         submitBtn.style.animation = 'shake 0.5s ease';
         setTimeout(() => {
@@ -360,7 +542,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const fields = [
           { el: document.getElementById('patient-name'), val: name },
           { el: document.getElementById('patient-phone'), val: phone },
-          { el: document.getElementById('treatment-concern'), val: concern },
+          { el: trigger, val: concern.length > 0 },
           { el: document.getElementById('appointment-date'), val: date }
         ];
 
@@ -413,31 +595,68 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
 
-      // Disable button and show loading
+      // Disable button and show loading state
       submitBtn.disabled = true;
-      submitBtn.textContent = '⏳ Processing...';
+      submitBtn.textContent = '⏳ Submitting...';
 
-      // Simulate webhook call (1.5s delay)
-      setTimeout(() => {
-        // Log the form data
-        const formData = {
-          name,
-          phone,
-          concern,
-          date,
-          time: selectedTime,
-          submitted_at: new Date().toISOString()
-        };
-        console.log('📋 Appointment Data (Ready for Webhook):', formData);
+      // Construct list of selected concerns
+      const concernsList = concern.map(c => {
+        const optEl = Array.from(options).find(o => o.dataset.value === c);
+        return optEl ? optEl.querySelector('label').textContent : c;
+      }).join(', ');
 
-        // Animate form away, show success
-        formInner.classList.add('hidden');
+      // Web3Forms API Access Key Configuration
+      // Get a free key from https://web3forms.com/ and paste it below
+      const web3FormsAccessKey = '3dd2394a-c8bc-41da-b689-768d0a38d35f';
 
-        setTimeout(() => {
-          formInner.style.display = 'none';
-          formSuccess.classList.add('visible');
-        }, 400);
-      }, 1500);
+      if (web3FormsAccessKey === 'YOUR_WEB3FORMS_ACCESS_KEY' || !web3FormsAccessKey) {
+        alert('⚠️ Web3Forms Access Key is not configured. Please get a free key from web3forms.com and add it to script.js.');
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Book Appointment';
+        return;
+      }
+
+      const payload = {
+        access_key: web3FormsAccessKey,
+        subject: `New Appointment Request from ${name}`,
+        from_name: 'Surat Dental Clinic Website',
+        'Patient Name': name,
+        'Phone Number': phone,
+        'Treatment Concern(s)': concernsList,
+        'Preferred Date': date,
+        'Preferred Time Slot': selectedTime
+      };
+
+      fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify(payload)
+      })
+        .then(async (response) => {
+          let json = await response.json();
+          if (response.status == 200) {
+            // Success state transition
+            formInner.classList.add('hidden');
+            setTimeout(() => {
+              formInner.style.display = 'none';
+              formSuccess.classList.add('visible');
+            }, 400);
+          } else {
+            console.error(response);
+            alert('⚠️ Submission failed: ' + (json.message || 'Unknown error.'));
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Book Appointment';
+          }
+        })
+        .catch((error) => {
+          console.error(error);
+          alert('⚠️ Submission error: Please check your internet connection and try again.');
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Book Appointment';
+        });
     });
   }
 
@@ -464,7 +683,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const highlightNavOnScroll = () => {
     const scrollY = window.pageYOffset;
     const navHeight = navbar ? navbar.offsetHeight : 72;
-    
+
     sections.forEach(section => {
       const sectionHeight = section.offsetHeight;
       // Set the activation threshold slightly above the landing scroll position (-0px extra offset)
@@ -508,7 +727,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (entry.isIntersecting) {
           const el = entry.target;
           const text = el.textContent;
-          
+
           if (text.includes('5000')) {
             animateCounter(el, 5000, '+');
           }

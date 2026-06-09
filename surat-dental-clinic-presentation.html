@@ -820,6 +820,68 @@ ul, ol {
   margin-bottom: var(--space-md);
 }
 
+.doctor-specialties {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-lg);
+}
+
+.specialty-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  background: linear-gradient(135deg, rgba(2, 132, 199, 0.06), rgba(79, 70, 229, 0.06));
+  border: 1px solid rgba(2, 132, 199, 0.12);
+  border-radius: var(--radius-pill);
+  color: var(--navy);
+  font-size: 0.825rem;
+  font-weight: 600;
+  transition: transform 300ms var(--ease-spring), box-shadow 300ms var(--ease-spring), border-color 200ms var(--ease-out), background 200ms var(--ease-out);
+  cursor: default;
+  box-shadow: var(--shadow-sm);
+  animation: badgeEntrance 0.8s var(--ease-spring) both;
+}
+
+.specialty-badge:nth-child(1) {
+  animation-delay: 200ms;
+}
+
+.specialty-badge:nth-child(2) {
+  animation-delay: 400ms;
+}
+
+.specialty-badge:hover {
+  transform: scale(1.06) translateY(-2px);
+  border-color: var(--sky-blue);
+  background: linear-gradient(135deg, rgba(2, 132, 199, 0.12), rgba(79, 70, 229, 0.12));
+  box-shadow: 0 8px 20px rgba(2, 132, 199, 0.14);
+}
+
+.specialty-badge .badge-icon {
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 300ms var(--ease-spring);
+}
+
+.specialty-badge:hover .badge-icon {
+  transform: scale(1.25) rotate(15deg);
+}
+
+@keyframes badgeEntrance {
+  from {
+    opacity: 0;
+    transform: scale(0.8) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
 .doctor-card-desc {
   font-size: 0.875rem;
   color: var(--slate-light);
@@ -1801,6 +1863,166 @@ ul, ol {
   padding-right: 40px;
 }
 
+/* Custom Multiselect */
+.custom-multiselect {
+  position: relative;
+  width: 100%;
+}
+
+.multiselect-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border: 1.5px solid rgba(15, 23, 42, 0.1);
+  border-radius: var(--radius-md);
+  font-size: 0.925rem;
+  color: var(--navy);
+  background: var(--alabaster-warm);
+  cursor: pointer;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast), background-color var(--transition-fast);
+  user-select: none;
+}
+
+.multiselect-trigger:focus,
+.custom-multiselect.open .multiselect-trigger {
+  border-color: var(--sky-blue);
+  box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.1);
+  background: var(--white);
+}
+
+.trigger-text {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: calc(100% - 20px);
+}
+
+.trigger-text.placeholder {
+  color: rgba(15, 23, 42, 0.3);
+}
+
+.trigger-arrow {
+  width: 16px;
+  height: 16px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2364748B' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+  transition: transform var(--transition-fast);
+}
+
+.custom-multiselect.open .trigger-arrow {
+  transform: rotate(180deg);
+}
+
+.multiselect-dropdown {
+  display: none;
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background: var(--white);
+  border: 1.5px solid rgba(15, 23, 42, 0.1);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  z-index: 100;
+  max-height: 240px;
+  overflow-y: auto;
+  padding: 4px 0;
+  animation: dropdownFadeIn 200ms var(--ease-out);
+}
+
+.custom-multiselect.open .multiselect-dropdown {
+  display: block;
+}
+
+@keyframes dropdownFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.multiselect-option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  cursor: pointer;
+  transition: background var(--transition-fast);
+  user-select: none;
+}
+
+.multiselect-option:hover {
+  background: rgba(2, 132, 199, 0.05);
+}
+
+.multiselect-option.selected {
+  background: rgba(2, 132, 199, 0.08);
+}
+
+.multiselect-option input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--sky-blue);
+  cursor: pointer;
+}
+
+.multiselect-option label {
+  font-size: 0.9rem;
+  color: var(--slate);
+  cursor: pointer;
+  flex-grow: 1;
+}
+
+.multiselect-option.selected label {
+  color: var(--sky-blue);
+  font-weight: 600;
+}
+
+/* Alert styles for past slots */
+.no-slots-alert {
+  padding: 12px 16px;
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px dashed rgba(239, 68, 68, 0.2);
+  border-radius: var(--radius-md);
+  color: #991B1B;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-top: var(--space-md);
+  margin-bottom: var(--space-sm);
+  animation: shake 0.5s ease;
+}
+
+.form-error-msg {
+  display: none;
+  font-size: 0.725rem;
+  color: var(--red);
+  margin-top: 4px;
+  font-weight: 500;
+  animation: slideDownFade 200ms var(--ease-out);
+}
+
+.form-error-msg.visible {
+  display: block;
+}
+
+@keyframes slideDownFade {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
 /* Time Slots Grid */
 .time-slots-label {
   font-size: 0.8rem;
@@ -1852,6 +2074,17 @@ ul, ol {
   background: linear-gradient(135deg, var(--sky-blue), var(--indigo));
   color: var(--white);
   box-shadow: 0 4px 12px rgba(2,132,199,0.25);
+}
+
+.time-slot:disabled,
+.time-slot.disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  pointer-events: none;
+  background: #E2E8F0;
+  border-color: #E2E8F0;
+  color: #94A3B8;
+  box-shadow: none;
 }
 
 .btn-submit {
@@ -2257,7 +2490,7 @@ ul, ol {
       <div class="nav-links" id="nav-links">
         <a href="#about" class="nav-link" id="nav-about">About Clinic</a>
         <a href="#treatments" class="nav-link" id="nav-treatments">Treatments</a>
-        <a href="#proof" class="nav-link" id="nav-proof">Patient Proof</a>
+        <a href="#proof" class="nav-link" id="nav-proof">Smile Transformations</a>
         <a href="#booking" class="nav-cta" id="nav-cta-book">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
             stroke-linecap="round" stroke-linejoin="round">
@@ -2398,6 +2631,16 @@ ul, ol {
             <div class="doctor-card-body">
               <h3 class="doctor-card-name">Dr Swara Gondalia</h3>
               <p class="doctor-card-title">B.D.S. (Dental Surgeon)</p>
+              <div class="doctor-specialties">
+                <div class="specialty-badge">
+                  <span class="badge-icon">âœ¨</span>
+                  <span class="badge-text">Specialist in Smile Designing</span>
+                </div>
+                <div class="specialty-badge">
+                  <span class="badge-icon">ðŸ’Ž</span>
+                  <span class="badge-text">Veneers Specialist</span>
+                </div>
+              </div>
               <p class="doctor-card-desc">
                 Dr. Swara Gondalia brings a meticulous eye for detail and a patient-first philosophy to every procedure.
                 Specializing in advanced diagnostics, aesthetic reconstructions, and painless laser dentistry, her
@@ -2991,23 +3234,59 @@ ul, ol {
                     <label class="form-label" for="patient-phone">Phone Number</label>
                     <input type="tel" class="form-input" id="patient-phone" name="phone" placeholder="e.g. 98765 43210"
                       required />
+                    <span class="form-error-msg" id="phone-error-msg">Phone number must be exactly 10 digits.</span>
                   </div>
 
                   <div class="form-group full-width">
-                    <label class="form-label" for="treatment-concern">Treatment Concern</label>
-                    <select class="form-select" id="treatment-concern" name="concern" required>
-                      <option value="" disabled selected>Select your concern...</option>
-                      <option value="dental-implants">Dental Implants</option>
-                      <option value="root-canal">Root Canal Treatment</option>
-                      <option value="teeth-whitening">Teeth Whitening</option>
-                      <option value="veneers-crowns">Veneers &amp; Crowns</option>
-                      <option value="dentures-bridges">Dentures &amp; Bridges</option>
-                      <option value="tooth-extraction">Tooth Extraction</option>
-                      <option value="deep-cleaning">Deep Cleaning / Scaling</option>
-                      <option value="cosmetic-reshaping">Cosmetic Reshaping</option>
-                      <option value="emergency">Dental Emergency</option>
-                      <option value="consultation">General Consultation</option>
-                    </select>
+                    <label class="form-label" for="treatment-concern">Treatment Concern(s)</label>
+                    <div class="custom-multiselect" id="concern-multiselect">
+                      <div class="multiselect-trigger" id="multiselect-trigger" tabindex="0">
+                        <span class="trigger-text placeholder">Select concern(s)...</span>
+                        <span class="trigger-arrow"></span>
+                      </div>
+                      <div class="multiselect-dropdown" id="multiselect-dropdown">
+                        <div class="multiselect-option" data-value="dental-implants">
+                          <input type="checkbox" id="opt-implants" />
+                          <label for="opt-implants">Dental Implants</label>
+                        </div>
+                        <div class="multiselect-option" data-value="root-canal">
+                          <input type="checkbox" id="opt-root-canal" />
+                          <label for="opt-root-canal">Root Canal Treatment</label>
+                        </div>
+                        <div class="multiselect-option" data-value="teeth-whitening">
+                          <input type="checkbox" id="opt-whitening" />
+                          <label for="opt-whitening">Teeth Whitening</label>
+                        </div>
+                        <div class="multiselect-option" data-value="veneers-crowns">
+                          <input type="checkbox" id="opt-veneers" />
+                          <label for="opt-veneers">Veneers &amp; Crowns</label>
+                        </div>
+                        <div class="multiselect-option" data-value="dentures-bridges">
+                          <input type="checkbox" id="opt-dentures" />
+                          <label for="opt-dentures">Dentures &amp; Bridges</label>
+                        </div>
+                        <div class="multiselect-option" data-value="tooth-extraction">
+                          <input type="checkbox" id="opt-extraction" />
+                          <label for="opt-extraction">Tooth Extraction</label>
+                        </div>
+                        <div class="multiselect-option" data-value="deep-cleaning">
+                          <input type="checkbox" id="opt-cleaning" />
+                          <label for="opt-cleaning">Deep Cleaning / Scaling</label>
+                        </div>
+                        <div class="multiselect-option" data-value="cosmetic-reshaping">
+                          <input type="checkbox" id="opt-reshaping" />
+                          <label for="opt-reshaping">Cosmetic Reshaping</label>
+                        </div>
+                        <div class="multiselect-option" data-value="emergency">
+                          <input type="checkbox" id="opt-emergency" />
+                          <label for="opt-emergency">Dental Emergency</label>
+                        </div>
+                        <div class="multiselect-option" data-value="consultation">
+                          <input type="checkbox" id="opt-consultation" />
+                          <label for="opt-consultation">General Consultation</label>
+                        </div>
+                      </div>
+                    </div>
                   </div>
 
                   <div class="form-group full-width">
@@ -3056,14 +3335,7 @@ ul, ol {
                 Your appointment request has been successfully routed.
                 Our team will confirm your slot via phone within 15 minutes.
               </p>
-              <div class="success-badge">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
-                  stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
-                  <polyline points="22 4 12 14.01 9 11.01" />
-                </svg>
-                Appointment Request Routed via Webhook
-              </div>
+
             </div>
           </div>
         </div>
@@ -3148,8 +3420,18 @@ document.addEventListener('DOMContentLoaded', () => {
       const targetEl = document.querySelector(targetId);
       if (targetEl) {
         const navHeight = navbar.offsetHeight;
-        const ribbonHeight = document.getElementById('top-ribbon').offsetHeight;
-        const targetPosition = targetEl.getBoundingClientRect().top + window.pageYOffset - navHeight;
+        let targetPosition = targetEl.getBoundingClientRect().top + window.pageYOffset - navHeight;
+
+        // Scroll directly to the section's heading element (bypassing top padding of the section)
+        const headingEl = targetEl.querySelector('.section-header') || targetEl.querySelector('.section-label');
+        if (headingEl) {
+          targetPosition = headingEl.getBoundingClientRect().top + window.pageYOffset - navHeight;
+
+          // Leave a little breathing room (offset) specifically for the About Clinic page
+          if (targetId === '#about') {
+            targetPosition -= 24; // 24px offset buffer
+          }
+        }
 
         window.scrollTo({
           top: targetPosition,
@@ -3271,7 +3553,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!indicator || window.innerWidth <= 768) return;
     const parentRect = activeBtn.parentElement.getBoundingClientRect();
     const btnRect = activeBtn.getBoundingClientRect();
-    
+
     indicator.style.width = `${btnRect.width}px`;
     indicator.style.transform = `translateX(${btnRect.left - parentRect.left - 6}px)`;
   };
@@ -3376,11 +3658,148 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ---------------------------------------------------------------
-  // 6. APPOINTMENT FORM â€” Date Picker & Time Slots
+  // 6. APPOINTMENT FORM â€” Date Picker, Custom Multiselect & Time Slots
   // ---------------------------------------------------------------
   const dateInput = document.getElementById('appointment-date');
   const timeSlots = document.querySelectorAll('.time-slot');
   let selectedTime = null;
+
+  // Custom Multiselect logic
+  const multiselect = document.getElementById('concern-multiselect');
+  const trigger = document.getElementById('multiselect-trigger');
+  const dropdown = document.getElementById('multiselect-dropdown');
+  const options = dropdown.querySelectorAll('.multiselect-option');
+  const triggerText = trigger.querySelector('.trigger-text');
+  let selectedConcerns = [];
+
+  if (trigger) {
+    trigger.addEventListener('click', (e) => {
+      e.stopPropagation();
+      multiselect.classList.toggle('open');
+    });
+
+    trigger.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        multiselect.classList.toggle('open');
+      }
+    });
+
+    document.addEventListener('click', (e) => {
+      if (multiselect && !multiselect.contains(e.target)) {
+        multiselect.classList.remove('open');
+      }
+    });
+
+    options.forEach(opt => {
+      const checkbox = opt.querySelector('input[type="checkbox"]');
+      const value = opt.dataset.value;
+
+      opt.addEventListener('click', (e) => {
+        if (e.target !== checkbox && e.target.tagName !== 'LABEL') {
+          checkbox.checked = !checkbox.checked;
+          checkbox.dispatchEvent(new Event('change'));
+        }
+      });
+
+      checkbox.addEventListener('change', () => {
+        if (checkbox.checked) {
+          if (!selectedConcerns.includes(value)) {
+            selectedConcerns.push(value);
+            opt.classList.add('selected');
+          }
+        } else {
+          selectedConcerns = selectedConcerns.filter(v => v !== value);
+          opt.classList.remove('selected');
+        }
+
+        if (selectedConcerns.length === 0) {
+          triggerText.textContent = "Select concern(s)...";
+          triggerText.classList.add('placeholder');
+        } else {
+          const selectedLabels = Array.from(options)
+            .filter(o => selectedConcerns.includes(o.dataset.value))
+            .map(o => o.querySelector('label').textContent);
+          triggerText.textContent = selectedLabels.join(', ');
+          triggerText.classList.remove('placeholder');
+        }
+      });
+    });
+  }
+
+  // Update available slots function
+  const updateSlotsAvailability = () => {
+    if (!dateInput || !dateInput.value) return;
+
+    const selectedDateVal = dateInput.value;
+    const today = new Date();
+
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth() + 1).padStart(2, '0');
+    const dd = String(today.getDate()).padStart(2, '0');
+    const todayStr = `${yyyy}-${mm}-${dd}`;
+
+    const isToday = selectedDateVal === todayStr;
+
+    const parseSlotTime = (timeStr) => {
+      const [time, modifier] = timeStr.split(' ');
+      let [hours, minutes] = time.split(':').map(Number);
+      if (modifier === 'PM' && hours < 12) {
+        hours += 12;
+      }
+      if (modifier === 'AM' && hours === 12) {
+        hours = 0;
+      }
+      return { hours, minutes };
+    };
+
+    const currentHours = today.getHours();
+    const currentMinutes = today.getMinutes();
+
+    let anySlotAvailable = false;
+
+    timeSlots.forEach(slot => {
+      const slotTime = slot.dataset.time;
+      const { hours: slotHours, minutes: slotMinutes } = parseSlotTime(slotTime);
+
+      if (isToday) {
+        // If today, disable slot if it is in the past
+        const isPast = (slotHours < currentHours) || (slotHours === currentHours && slotMinutes <= currentMinutes);
+        if (isPast) {
+          slot.disabled = true;
+          slot.classList.add('disabled');
+          if (selectedTime === slotTime) {
+            slot.classList.remove('selected');
+            selectedTime = null;
+          }
+        } else {
+          slot.disabled = false;
+          slot.classList.remove('disabled');
+          anySlotAvailable = true;
+        }
+      } else {
+        slot.disabled = false;
+        slot.classList.remove('disabled');
+        anySlotAvailable = true;
+      }
+    });
+
+    const noSlotsMessage = document.getElementById('no-slots-message');
+    if (isToday && !anySlotAvailable) {
+      if (!noSlotsMessage) {
+        const msg = document.createElement('div');
+        msg.id = 'no-slots-message';
+        msg.className = 'no-slots-alert';
+        msg.textContent = 'âš ï¸ All slots for today are in the past. Please select tomorrow or a future date.';
+        const grid = document.getElementById('time-slots-grid');
+        grid.parentNode.insertBefore(msg, grid);
+      }
+    } else {
+      if (noSlotsMessage) {
+        noSlotsMessage.remove();
+      }
+    }
+  };
 
   // Set minimum date to today
   if (dateInput) {
@@ -3401,13 +3820,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const tmDD = String(tomorrow.getDate()).padStart(2, '0');
     dateInput.value = `${tmYYYY}-${tmMM}-${tmDD}`;
 
-    // Sunday validation
+    // Sunday check + slot updates
     dateInput.addEventListener('change', () => {
       if (!dateInput.value) return;
       const selectedDate = new Date(dateInput.value);
       if (selectedDate.getDay() === 0) {
         alert("The clinic is closed on Sundays. Please select a Monday to Saturday date.");
-        
+
         // Reset to next available weekday
         const defaultDate = new Date();
         defaultDate.setDate(defaultDate.getDate() + 1);
@@ -3419,17 +3838,52 @@ document.addEventListener('DOMContentLoaded', () => {
         const defDD = String(defaultDate.getDate()).padStart(2, '0');
         dateInput.value = `${defYYYY}-${defMM}-${defDD}`;
       }
+      updateSlotsAvailability();
     });
+
+    // Run initially to setup availability for default date
+    updateSlotsAvailability();
   }
 
   // Time slot selection
   timeSlots.forEach(slot => {
     slot.addEventListener('click', () => {
+      if (slot.disabled || slot.classList.contains('disabled')) return;
       timeSlots.forEach(s => s.classList.remove('selected'));
       slot.classList.add('selected');
       selectedTime = slot.dataset.time;
     });
   });
+
+  // Real-time Phone Number Validation
+  const phoneInput = document.getElementById('patient-phone');
+  const phoneError = document.getElementById('phone-error-msg');
+
+  if (phoneInput && phoneError) {
+    const validatePhone = () => {
+      const cleaned = phoneInput.value.replace(/\D/g, '');
+
+      // Limit to 10 digits in real-time
+      if (phoneInput.value !== cleaned) {
+        phoneInput.value = cleaned;
+      }
+      if (phoneInput.value.length > 10) {
+        phoneInput.value = phoneInput.value.slice(0, 10);
+      }
+
+      const digitCount = phoneInput.value.length;
+      if (digitCount > 0 && digitCount < 10) {
+        phoneError.classList.add('visible');
+        phoneInput.style.borderColor = 'var(--red)';
+      } else {
+        phoneError.classList.remove('visible');
+        phoneInput.style.borderColor = '';
+      }
+    };
+
+    phoneInput.addEventListener('input', validatePhone);
+    phoneInput.addEventListener('blur', validatePhone);
+  }
 
   // ---------------------------------------------------------------
   // 7. FORM SUBMISSION with animated success state
@@ -3446,10 +3900,10 @@ document.addEventListener('DOMContentLoaded', () => {
       // Basic validation
       const name = document.getElementById('patient-name').value.trim();
       const phone = document.getElementById('patient-phone').value.trim();
-      const concern = document.getElementById('treatment-concern').value;
+      const concern = selectedConcerns; // Array of selected concern values
       const date = document.getElementById('appointment-date').value;
 
-      if (!name || !phone || !concern || !date) {
+      if (!name || !phone || concern.length === 0 || !date) {
         // Shake the submit button for feedback
         submitBtn.style.animation = 'shake 0.5s ease';
         setTimeout(() => {
@@ -3460,7 +3914,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const fields = [
           { el: document.getElementById('patient-name'), val: name },
           { el: document.getElementById('patient-phone'), val: phone },
-          { el: document.getElementById('treatment-concern'), val: concern },
+          { el: trigger, val: concern.length > 0 },
           { el: document.getElementById('appointment-date'), val: date }
         ];
 
@@ -3513,31 +3967,68 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
 
-      // Disable button and show loading
+      // Disable button and show loading state
       submitBtn.disabled = true;
-      submitBtn.textContent = 'â³ Processing...';
+      submitBtn.textContent = 'â³ Submitting...';
 
-      // Simulate webhook call (1.5s delay)
-      setTimeout(() => {
-        // Log the form data
-        const formData = {
-          name,
-          phone,
-          concern,
-          date,
-          time: selectedTime,
-          submitted_at: new Date().toISOString()
-        };
-        console.log('ðŸ“‹ Appointment Data (Ready for Webhook):', formData);
+      // Construct list of selected concerns
+      const concernsList = concern.map(c => {
+        const optEl = Array.from(options).find(o => o.dataset.value === c);
+        return optEl ? optEl.querySelector('label').textContent : c;
+      }).join(', ');
 
-        // Animate form away, show success
-        formInner.classList.add('hidden');
+      // Web3Forms API Access Key Configuration
+      // Get a free key from https://web3forms.com/ and paste it below
+      const web3FormsAccessKey = '3dd2394a-c8bc-41da-b689-768d0a38d35f';
 
-        setTimeout(() => {
-          formInner.style.display = 'none';
-          formSuccess.classList.add('visible');
-        }, 400);
-      }, 1500);
+      if (web3FormsAccessKey === 'YOUR_WEB3FORMS_ACCESS_KEY' || !web3FormsAccessKey) {
+        alert('âš ï¸ Web3Forms Access Key is not configured. Please get a free key from web3forms.com and add it to script.js.');
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Book Appointment';
+        return;
+      }
+
+      const payload = {
+        access_key: web3FormsAccessKey,
+        subject: `New Appointment Request from ${name}`,
+        from_name: 'Surat Dental Clinic Website',
+        'Patient Name': name,
+        'Phone Number': phone,
+        'Treatment Concern(s)': concernsList,
+        'Preferred Date': date,
+        'Preferred Time Slot': selectedTime
+      };
+
+      fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify(payload)
+      })
+        .then(async (response) => {
+          let json = await response.json();
+          if (response.status == 200) {
+            // Success state transition
+            formInner.classList.add('hidden');
+            setTimeout(() => {
+              formInner.style.display = 'none';
+              formSuccess.classList.add('visible');
+            }, 400);
+          } else {
+            console.error(response);
+            alert('âš ï¸ Submission failed: ' + (json.message || 'Unknown error.'));
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Book Appointment';
+          }
+        })
+        .catch((error) => {
+          console.error(error);
+          alert('âš ï¸ Submission error: Please check your internet connection and try again.');
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Book Appointment';
+        });
     });
   }
 
@@ -3564,7 +4055,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const highlightNavOnScroll = () => {
     const scrollY = window.pageYOffset;
     const navHeight = navbar ? navbar.offsetHeight : 72;
-    
+
     sections.forEach(section => {
       const sectionHeight = section.offsetHeight;
       // Set the activation threshold slightly above the landing scroll position (-0px extra offset)
@@ -3608,7 +4099,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (entry.isIntersecting) {
           const el = entry.target;
           const text = el.textContent;
-          
+
           if (text.includes('5000')) {
             animateCounter(el, 5000, '+');
           }
